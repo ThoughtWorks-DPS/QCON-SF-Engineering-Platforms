@@ -1,0 +1,27 @@
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  labels:
+    app: hello-restful
+  name: hello-restful.test-multicluster-ns
+spec:
+  host: hello-restful.test-multicluster-ns.svc.cluster.local
+  trafficPolicy:
+    connectionPool:
+      http:
+        maxRequestsPerConnection: 1
+    loadBalancer:
+      localityLbSetting:
+        distribute:
+          - from: '*'
+            to:
+              '*': 100
+        enabled: true
+      simple: ROUND_ROBIN
+    outlierDetection:
+      baseEjectionTime: 60s
+      consecutive5xxErrors: 5
+      interval: 5s
+      maxEjectionPercent: 100
+      minHealthPercent: 0
